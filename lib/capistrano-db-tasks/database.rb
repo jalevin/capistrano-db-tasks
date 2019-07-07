@@ -135,7 +135,7 @@ module Database
 
     # cleanup = true removes the mysqldump file after loading, false leaves it in db/
     def load(file, cleanup)
-      unzip_file = File.join(File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
+      unzip_file = File.join(db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
       # @cap.run "cd #{@cap.current_path} && bunzip2 -f #{file} && RAILS_ENV=#{@cap.rails_env} bundle exec rake db:drop db:create && #{import_cmd(unzip_file)}"
       @cap.execute "cd #{@cap.current_path} && #{compressor.decompress(file)} && RAILS_ENV=#{@cap.fetch(:rails_env)} && #{import_cmd(unzip_file)}"
       @cap.execute("cd #{@cap.current_path} && rm #{unzip_file}") if cleanup
@@ -171,7 +171,7 @@ module Database
 
     # cleanup = true removes the mysqldump file after loading, false leaves it in db/
     def load(file, cleanup)
-      unzip_file = File.join(File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
+      unzip_file = File.join(db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
       puts "executing local: #{compressor.decompress(file)} && #{import_cmd(unzip_file)}"
       execute("#{compressor.decompress(file)} && #{import_cmd(unzip_file)}")
       if cleanup
