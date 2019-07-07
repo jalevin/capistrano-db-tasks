@@ -122,7 +122,7 @@ module Database
     end
 
     def download(local_file = "#{output_file}")
-      @cap.download! db_dump_file_path, "#{db_dump_dir}/#{local_file}"
+      @cap.download! db_dump_file_path, local_file
     end
 
     def clean_dump_if_needed
