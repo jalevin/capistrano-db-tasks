@@ -3,11 +3,17 @@ module Database
     DBCONFIG_BEGIN_FLAG = "__CAPISTRANODB_CONFIG_BEGIN_FLAG__".freeze
     DBCONFIG_END_FLAG = "__CAPISTRANODB_CONFIG_END_FLAG__".freeze
 
-    attr_accessor :config, :output_file
+    attr_accessor :config, :output_file, :db_dump_suffix
 
     def initialize(cap_instance)
       @cap = cap_instance
+      @db_dump_suffix = db_dump_suffix
     end
+
+		def db_dump_suffix
+			@cap.fetch(:db_dump_dir) || 'db'
+		end
+
 
     def mysql?
       @config['adapter'] =~ /^mysql/
@@ -122,7 +128,7 @@ module Database
     end
 
     def download(local_file = "#{output_file}")
-			@cap.download!(db_dump_file_path, File.join(db_dump_suffix, local_file))
+			@cap.download!(db_dump_file_path, File.join(@db_dump_suffix, local_file))
     end
 
     def clean_dump_if_needed
@@ -135,7 +141,7 @@ module Database
 
     # cleanup = true removes the mysqldump file after loading, false leaves it in db/
     def load(file, cleanup)
-      unzip_file = File.join(db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
+      unzip_file = File.join(@db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
       # @cap.run "cd #{@cap.current_path} && bunzip2 -f #{file} && RAILS_ENV=#{@cap.rails_env} bundle exec rake db:drop db:create && #{import_cmd(unzip_file)}"
       @cap.execute "cd #{@cap.current_path} && #{compressor.decompress(file)} && RAILS_ENV=#{@cap.fetch(:rails_env)} && #{import_cmd(unzip_file)}"
       @cap.execute("cd #{@cap.current_path} && rm #{unzip_file}") if cleanup
@@ -143,12 +149,8 @@ module Database
 
     private
 
-		def db_dump_suffix
-			@cap.fetch(:db_dump_dir) || 'db'
-		end
-
     def db_dump_dir
-      "#{@cap.current_path}/#{db_dump_suffix}"
+      "#{@cap.current_path}/#{@db_dump_suffix}"
     end
 
     def db_dump_file_path
@@ -171,7 +173,7 @@ module Database
 
     # cleanup = true removes the mysqldump file after loading, false leaves it in db/
     def load(file, cleanup)
-      unzip_file = File.join(db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
+      unzip_file = File.join(@db_dump_suffix, File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
       puts "executing local: #{compressor.decompress(file)} && #{import_cmd(unzip_file)}"
       execute("#{compressor.decompress(file)} && #{import_cmd(unzip_file)}")
       if cleanup
