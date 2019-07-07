@@ -122,7 +122,7 @@ module Database
     end
 
     def download(local_file = "#{output_file}")
-      @cap.download! db_dump_file_path, local_file
+			@cap.download!(db_dump_file_path, File.join(db_dump_suffix, local_file))
     end
 
     def clean_dump_if_needed
@@ -143,12 +143,16 @@ module Database
 
     private
 
-    def db_dump_file_path
-      "#{db_dump_dir}/#{output_file}"
-    end
+		def db_dump_suffix
+			@cap.fetch(:db_dump_dir) || 'db'
+		end
 
     def db_dump_dir
-      @cap.fetch(:db_dump_dir) || "#{@cap.current_path}/db"
+      "#{@cap.current_path}/#{db_dump_suffix}"
+    end
+
+    def db_dump_file_path
+      "#{db_dump_dir}/#{output_file}"
     end
   end
 
