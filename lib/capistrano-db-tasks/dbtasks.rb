@@ -55,7 +55,7 @@ namespace :db do
 
         db_dump_dir = fetch(:db_dump_dir)
 
-				if ENV['DUMP_FILE'].include?(db_prefix)
+				if ENV['DUMP_FILE'].include?(db_dump_dir)
 					raise "only supply the file name for the dump you would like to load! We will grab it from #{db_dump_dir} for you."
 				end
 
