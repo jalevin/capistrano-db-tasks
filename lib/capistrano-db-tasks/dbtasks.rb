@@ -53,13 +53,13 @@ namespace :db do
                 'variable'
         end
 
-        db_prefix = fetch(:db_dump_dir)
+        db_dump_dir = fetch(:db_dump_dir)
 
-				if ENV['DUMP_FILE'].include?(db_previx)
+				if ENV['DUMP_FILE'].include?(db_prefix)
 					raise "only supply the file name for the dump you would like to load! We will grab it from #{db_dump_dir} for you."
 				end
 
-				if !File.exist?(File.join(db_prefix,ENV['DUMP_FILE']))
+				if !File.exist?(File.join(db_dump_dir,ENV['DUMP_FILE']))
           raise "File #{ENV['DUMP_FILE']} doesn't exists"
         end
 
