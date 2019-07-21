@@ -123,7 +123,7 @@ module Database
     end
 
     def dump
-      @cap.execute "cd #{@cap.current_path} && #{dump_cmd} | #{compressor.compress('-', db_dump_file_path)}"
+      @cap.execute "cd #{@cap.current_path}/#{@db_dump_suffix} && #{dump_cmd} | #{compressor.compress('-', db_dump_file_path)}"
       self
     end
 
@@ -194,7 +194,7 @@ module Database
     end
 
     def upload
-      remote_file = "#{@cap.current_path}/#{output_file}"
+      remote_file = "#{@cap.current_path}/#{@db_dump_suffix}/#{output_file}"
       @cap.upload! output_file, remote_file
     end
 
