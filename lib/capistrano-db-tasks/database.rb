@@ -146,7 +146,7 @@ module Database
       unzip_file = File.join(File.dirname(file), File.basename(file, ".#{compressor.file_extension}"))
       # @cap.run "cd #{@cap.current_path} && bunzip2 -f #{file} && RAILS_ENV=#{@cap.rails_env} bundle exec rake db:drop db:create && #{import_cmd(unzip_file)}"
       @cap.execute "cd #{@cap.current_path} && #{compressor.decompress(file)} && RAILS_ENV=#{@cap.fetch(:rails_env)} && #{import_cmd(unzip_file)}"
-      @cap.execute("cd #{@cap.current_path} && rm #{unzip_file}") if cleanup
+      @cap.execute("cd #{@cap.current_path}/#{@db_dump_suffix} && rm #{unzip_file}") if cleanup
     end
 
     private
